@@ -12,8 +12,13 @@ export class LocalStorageService {
   constructor() {
     this._data$.next(
       Object.keys(this._localStorage)
-        .reduce((accumulator, key) => accumulator[key] = JSON.parse(this._localStorage.getItem(key) ?? ''), {} as any)
+        .reduce((accumulator, key) => {
+          accumulator[key] = JSON.parse(this._localStorage.getItem(key) ?? '');
+          return accumulator;
+        }, {} as any)
     );
+
+    console.log(this._data$.value)
   }
 
   get changes$() {

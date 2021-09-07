@@ -7,6 +7,7 @@ import { ObservableCache } from '../utils/observable-cache';
 import { LocalStorageService } from './local-storage.service';
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {IApiResponseModel} from "../models/api.models";
+import {cloneDeep} from "lodash";
 
 export const USER_LOCALSTORAGE_PATH = 'user';
 @Injectable({
@@ -18,6 +19,13 @@ export class AuthService {
   constructor(private localStorageService: LocalStorageService, private httpClient: HttpClient) { }
   public get isLoggedIn() {
     return !!this.localStorageService.get(USER_LOCALSTORAGE_PATH) || !!this.authUserData$.value;
+  }
+
+  public get userData(): IAuthorizedUserData | null {
+    if (!this.authUserData$.value) {
+      this.authUserData$.next(this.localStorageService.get(USER_LOCALSTORAGE_PATH));
+    }
+    return cloneDeep(this.authUserData$.value);
   }
 
   public get userData$(): Observable<IAuthorizedUserData | null> {
@@ -35,8 +43,11 @@ export class AuthService {
               return of(res);
             }
             return of(res).pipe(
-              tap((res) => {this.authUserData$.next(res.data!)}),
-              switchMap(data => this.localStorageService.set$(USER_LOCALSTORAGE_PATH, data).pipe(switchMap(() => of(data))))
+              tap((res) => {
+                console.log(res.data!);
+                this.authUserData$.next(res.data!);
+              }),
+              switchMap(res => this.localStorageService.set$(USER_LOCALSTORAGE_PATH, res.data).pipe(switchMap(() => of(res))))
             );
           })
       ));
@@ -54,7 +65,7 @@ export class AuthService {
             }
             return of(res).pipe(
               tap((res) => {this.authUserData$.next(res.data!)}),
-              switchMap(data => this.localStorageService.set$(USER_LOCALSTORAGE_PATH, data).pipe(switchMap(() => of(data))))
+              switchMap(res => this.localStorageService.set$(USER_LOCALSTORAGE_PATH, res.data).pipe(switchMap(() => of(res.data))))
             );
           })
         ));
