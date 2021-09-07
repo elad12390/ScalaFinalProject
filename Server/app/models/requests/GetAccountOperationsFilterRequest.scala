@@ -9,7 +9,8 @@ case class GetAccountOperationsFilterRequest(
                                             accountNumber: Option[Int] = None,
                                             actionType: Option[Int] = None,
                                             fromDate: Option[DateTime] = None,
-                                            toDate: Option[DateTime] = None
+                                            toDate: Option[DateTime] = None,
+                                            amount: Option[Double] = None
                                             )
 object GetAccountOperationsFilterRequest {
   implicit val tsreads: Reads[DateTime] = Reads.of[String] map { new DateTime(_) }

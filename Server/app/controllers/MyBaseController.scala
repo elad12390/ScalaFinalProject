@@ -2,7 +2,7 @@ package controllers
 
 import akka.actor.ActorSystem
 import com.google.gson.Gson
-import models.ApiResponse
+import models.responses.ApiResponse
 import play.api.http.MimeTypes
 import play.api.mvc.{AbstractController, ControllerComponents, Result}
 import utils.Serializers.gson

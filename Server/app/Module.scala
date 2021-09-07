@@ -1,7 +1,7 @@
 import com.google.inject.AbstractModule
 import play.modules.reactivemongo.ReactiveMongoApi
-import repositories.AccountOperationRepository
-import services.AccountService
+import repositories.{AccountOperationRepository, UserRepository}
+import services.{AccountService, UserService}
 
 import java.time.Clock
 
@@ -19,8 +19,12 @@ class Module extends AbstractModule {
 
   override def configure() = {
     bind(classOf[AccountOperationRepository])
+    bind(classOf[UserRepository])
+
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone)
+
     bind(classOf[AccountService])
+    bind(classOf[UserService])
 
   }
 

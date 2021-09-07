@@ -11,7 +11,7 @@ resolvers += "Akka Snapshot Repository" at "https://repo.akka.io/snapshots/"
       
 scalaVersion := "2.13.5"
 
-libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice, "com.google.code.gson" % "gson" % "2.2.4")
+libraryDependencies ++= Seq( jdbc , ehcache , ws , specs2 % Test , guice, "com.google.code.gson" % "gson" % "2.2.4", "org.mindrot" % "jbcrypt" % "0.3m")
 
 libraryDependencies ++= Seq(
   // Enable reactive mongo for Play 2.8

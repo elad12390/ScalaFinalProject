@@ -32,6 +32,8 @@ export class LocalStorageService {
   }
 
   set(key: string, data: any): void {
+    const jsonData = JSON.stringify(data);
+    localStorage.setItem(key, jsonData);
   }
 
   set$(key: string, data: any): Observable<boolean> {
@@ -44,7 +46,7 @@ export class LocalStorageService {
   }
 
   remove(key: string) {
-      localStorage.removeItem(key);
+    localStorage.removeItem(key);
   }
 
 }

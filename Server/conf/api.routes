@@ -1,11 +1,3 @@
 
-
-GET     /account-operation              controllers.AccountController.getAll
-+ nocsrf
-GET     /account-operation/:id          controllers.AccountController.getById(id: String)
-+ nocsrf
-POST    /account-operation              controllers.AccountController.create
-+ nocsrf
-PUT     /account-operation/:id          controllers.AccountController.update(id: String)
-+ nocsrf
-DELETE  /account-operation/:id          controllers.AccountController.delete(id: String)
+->      /account-operation              accountoperation.Routes
+->      /auth                           auth.Routes

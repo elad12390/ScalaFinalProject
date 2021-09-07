@@ -28,6 +28,10 @@ class AccountOperationRepository  @Inject()(
       doc = doc ++ BSONDocument("actionType" -> filter.actionType)
     }
 
+    if (filter.amount.nonEmpty) {
+      doc = doc ++ BSONDocument("amount" -> filter.amount)
+    }
+
     if (filter.fromDate.nonEmpty || filter.toDate.nonEmpty) {
       var dateFilter = BSONDocument()
       if (filter.fromDate.nonEmpty) {

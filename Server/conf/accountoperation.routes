@@ -1,0 +1,7 @@
+
+
+GET     /              controllers.AccountController.getAll
+GET     /:id          controllers.AccountController.getById(id: String)
+POST    /              controllers.AccountController.create
+PUT     /:id          controllers.AccountController.update(id: String)
+DELETE  /:id          controllers.AccountController.delete(id: String)
