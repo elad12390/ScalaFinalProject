@@ -14,6 +14,7 @@ import utils.Serializers.gson
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class AuthFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext, userService: UserService) extends Filter {
 
@@ -21,10 +22,11 @@ class AuthFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext
     if (requestHeader.path.startsWith("/api/auth")) {
       return nextFilter(requestHeader)
     }
-    requestHeader.session.get("user").map { userName =>
-      requestHeader.session.get("token").map(token => {
-        userService.isLoggedIn(userName, token)
-        nextFilter(requestHeader)
+    requestHeader.headers.get("user").map { userName =>
+      requestHeader.headers.get("token").map(token => {
+        userService.isLoggedIn(userName, token).transformWith[Result] {
+          case Success(isLoggedIn) => if (isLoggedIn) {nextFilter(requestHeader)} else {returnInnerErrorCode(nextFilter)(requestHeader)(ApiResponseException(InnerErrorCodes.NotLoggedIn))}
+        }
       }).getOrElse {
         return returnInnerErrorCode(nextFilter)(requestHeader)(ApiResponseException(InnerErrorCodes.NotLoggedIn))
       }

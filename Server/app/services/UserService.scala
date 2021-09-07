@@ -63,7 +63,7 @@ class UserService @Inject()(actorSystem: ActorSystem, userRepository: UserReposi
 
   def isLoggedIn(req: (String, String)): Future[Boolean] = {
     userRepository.getByUserName(req._1).map(user => {
-        user.nonEmpty && user.get.token.get == req._2
+        user.nonEmpty && user.get.tokenExpiration.get.isAfter(DateTime.now()) && user.get.token.get == req._2
     })
   }
 }
