@@ -2,6 +2,8 @@ package services
 
 import akka.actor.ActorSystem
 import entitites.{AccountOperation, User}
+import enums.InnerErrorCodes
+import models.exceptions.ApiResponseException
 import models.requests.{AuthRequest, GetAccountOperationsFilterRequest}
 import models.responses.AuthResponse
 import org.joda.time.DateTime
@@ -21,7 +23,7 @@ class UserService @Inject()(actorSystem: ActorSystem, userRepository: UserReposi
   def register(req: AuthRequest): Future[AuthResponse] = {
     userRepository.getByUserName(req.userName).flatMap(user => {
       if (user.nonEmpty) {
-        throw new Exception("User already exists")
+        throw ApiResponseException(InnerErrorCodes.UserAlreadyExists)
       }
 
       val pwdHash = BCrypt.hashpw(req.userName + req.password, BCrypt.gensalt)
@@ -51,10 +53,10 @@ class UserService @Inject()(actorSystem: ActorSystem, userRepository: UserReposi
 
           AuthResponse(req.userName, loginToken)
         } else {
-          throw new Exception("Wrong username or password")
+          throw ApiResponseException(InnerErrorCodes.UserOrPasswordWrong)
         }
       } else {
-        throw new Exception("User not found")
+        throw ApiResponseException(InnerErrorCodes.UserNotFound)
       }
     })
   }
