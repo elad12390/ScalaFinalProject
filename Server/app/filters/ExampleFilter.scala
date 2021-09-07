@@ -24,7 +24,7 @@ class ExampleFilter @Inject()( implicit override val mat: Materializer, exec: Ex
     // and eventually call the action. Take the result and modify it
     // by adding a new header.
     nextFilter(requestHeader).map { result =>
-      result.withHeaders("X-ExampleFilter" -> "foo")
+      result.withHeaders("X-ExampleFilter" -> "foo", "Access-Control-Allow-Origin" -> "*")
     }
   }
 

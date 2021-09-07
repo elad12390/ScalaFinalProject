@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import entitites.AccountOperation
 import models.exceptions.ApiResponseException
 import models.requests.GetAccountOperationsFilterRequest
+import models.requests.GetAccountOperationsFilterRequest.map2GetAccountOperationsFilterRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request, Result}
 import services.AccountService
@@ -18,17 +19,15 @@ class AccountController @Inject()(
                                    authService: AccountService,
                                    actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends MyBaseController(cc, actorSystem) {
 
-  def getAll: Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
-    request.body.validate[GetAccountOperationsFilterRequest].fold(
-      _ => Future.successful(BadRequest("cannot parse filter request")),
-      filter => authService.getAll(filter).transformWith[Result]{
-        case Success(res) => okResponse(res)
+  def getAll(): Action[AnyContent] = Action.async { implicit request => {
+    var filter = request.queryString.map{ case (k,v) => k -> v.toString }
+    authService.getAll(map2GetAccountOperationsFilterRequest(filter)).transformWith[Result]{
+        case Success(res) => okResponse[Seq[AccountOperation]](res)
         case Failure(exception) => exception match {
           case e: ApiResponseException => handleApiResponseException(e)
           case e => Future {InternalServerError("Internal server error: " + e.toString)}
         }
       }
-    )
   }}
 
   def getById(id: String): Action[AnyContent] = Action.async { implicit request: Request[Any] =>
