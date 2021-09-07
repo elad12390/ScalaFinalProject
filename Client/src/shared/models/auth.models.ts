@@ -1,6 +1,5 @@
 
 export interface IAuthorizedUserData {
-  firstName: string,
-  lastName: string,
-  authToken: string
+  userName: String;
+  token: String;
 }

@@ -4,5 +4,5 @@ export function addToPath(originalPath: string, ...paths: string[]) {
   paths.forEach(path => {
     newPath += '/' + path;
   });
-  return originalPath
+  return newPath
 }

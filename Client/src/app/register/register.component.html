@@ -1,0 +1,28 @@
+<div>
+  <mat-card style="margin:0; height: 100%">
+    <mat-card-content>
+      <ng-container *ngIf="form">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <h2>Register</h2>
+          <mat-form-field class="full-width-input">
+            <input matInput placeholder="Email" formControlName="username" required>
+            <mat-error>
+              Please provide a valid email address
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width-input">
+            <input matInput type="password" placeholder="Password" formControlName="password" required>
+            <mat-error>
+              Please provide a valid password
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary">Register</button>
+          <ng-container *ngIf="loginErrors$ | async as loginErrors">
+            <div *ngIf="loginErrors.userExistsAlready" class="error">Username is taken, please try another</div>
+          </ng-container>
+        </form>
+
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>

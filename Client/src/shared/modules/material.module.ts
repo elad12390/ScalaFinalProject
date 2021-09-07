@@ -5,6 +5,8 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {MatCardModule} from "@angular/material/card";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 
 @NgModule({
@@ -12,9 +14,11 @@ import {MatButtonModule} from "@angular/material/button";
 		BrowserModule,
 		MatInputModule,
 		LayoutModule,
-		MatToolbarModule,
+    FlexLayoutModule,
+    MatToolbarModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCardModule
 	]
 })
 export class MaterialModule { }

@@ -4,7 +4,7 @@ import { addToPath } from "./utils";
 export class AuthApiPath {
   private static readonly mapping = new Mapping(['login', 'register']);
   private static readonly _basePath = 'auth';
-  readonly path;
+  path;
 
   constructor(path: string) {
     this.path = addToPath(path, AuthApiPath._basePath);

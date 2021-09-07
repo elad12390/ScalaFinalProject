@@ -24,6 +24,10 @@ export class LocalStorageService {
   }
 
   get(key: string): any {
+    if (!this._data$.value || !this._data$.value[key]) {
+      this.set(key, JSON.parse(this._localStorage.getItem(key) as string));
+    }
+    console.log(this._data$.value)
     return clone(this._data$.value[key]);
   }
 
@@ -34,6 +38,10 @@ export class LocalStorageService {
   set(key: string, data: any): void {
     const jsonData = JSON.stringify(data);
     localStorage.setItem(key, jsonData);
+    this._data$.next({
+      ...this._data$.value,
+      [key]: data
+    })
   }
 
   set$(key: string, data: any): Observable<boolean> {
