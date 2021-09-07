@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HomeService} from "./home.service";
 import {Observable} from "rxjs";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,7 @@ export class HomeComponent implements OnInit {
   constructor(private home: HomeService) { }
 
   ngOnInit(): void {
-    this.allOps$ = this.home.accountOps$;
+    this.allOps$ = this.home.accountOps$.pipe(map(i => i.data));
   }
 
 }

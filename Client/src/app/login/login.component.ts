@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
         const username = this.form.get('username')?.value;
         const password = this.form.get('password')?.value;
         this.authService.login$(username, password)
-          .subscribe((res) => {
+          .subscribe(async (res) => {
             switch (res.errorCode) {
               case InnerErrorCodes.UserNotFound:
                 this.loginErrors$.next({
@@ -64,6 +64,7 @@ export class LoginComponent implements OnInit {
                 break;
               default:
                 if (this.authService.isLoggedIn) {
+                  await this.sleep(100)
                   this.router.navigate([this.returnUrl]).then();
                 }
                 break;
@@ -72,6 +73,10 @@ export class LoginComponent implements OnInit {
     } else {
       this.formSubmitAttempt = true;
     }
+  }
+
+  sleep(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   navigateToRegister() {

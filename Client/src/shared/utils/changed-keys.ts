@@ -9,7 +9,6 @@ export function changedKeys(o1: any, o2: any): any {
       if (o1[key] !== o2[key]) {
         accumulator[key] = o2[key];
       }
-      console.log('test');
     }
 
     return accumulator;

@@ -13,6 +13,8 @@ import {APIInterceptor} from "../shared/interceptors/api-interceptor";
 import {CommonModule} from "@angular/common";
 import {MatCommonModule} from "@angular/material/core";
 import { RegisterComponent } from './register/register.component';
+import {ErrorInterceptor} from "../shared/interceptors/error.interceptor";
+import {interceptors} from "../shared/interceptors/interceptors.const";
 
 @NgModule({
   declarations: [
@@ -31,11 +33,7 @@ import { RegisterComponent } from './register/register.component';
     MaterialModule,
     HttpClientModule
   ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: APIInterceptor,
-    multi: true,
-  }],
+  providers: [...interceptors],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

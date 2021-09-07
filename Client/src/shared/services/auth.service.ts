@@ -44,7 +44,6 @@ export class AuthService {
             }
             return of(res).pipe(
               tap((res) => {
-                console.log(res.data!);
                 this.authUserData$.next(res.data!);
               }),
               switchMap(res => this.localStorageService.set$(USER_LOCALSTORAGE_PATH, res.data).pipe(switchMap(() => of(res))))
@@ -69,6 +68,11 @@ export class AuthService {
             );
           })
         ));
+  }
+
+  public logout() {
+    this.authUserData$.next(null);
+    this.localStorageService.remove(USER_LOCALSTORAGE_PATH)
   }
 }
 

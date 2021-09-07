@@ -18,7 +18,6 @@ export class LocalStorageService {
         }, {} as any)
     );
 
-    console.log(this._data$.value)
   }
 
   get changes$() {
@@ -32,7 +31,6 @@ export class LocalStorageService {
     if (!this._data$.value || !this._data$.value[key]) {
       this.set(key, JSON.parse(this._localStorage.getItem(key) as string));
     }
-    console.log(this._data$.value)
     return clone(this._data$.value[key]);
   }
 
@@ -59,6 +57,9 @@ export class LocalStorageService {
   }
 
   remove(key: string) {
+    const data = this._data$.value;
+    delete data[key];
+    this._data$.next(data)
     localStorage.removeItem(key);
   }
 
