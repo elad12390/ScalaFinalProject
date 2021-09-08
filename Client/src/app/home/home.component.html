@@ -1,3 +1,12 @@
-<h1>test</h1>asdasd
-<div *ngFor="let op of allOps$ | async">
+<div>
+<input type="text" #input  ngmodel>
+<button class="btn btn-success"  (click)="getAccount()">all</button>
+<button class="btn btn-success"  (click)="getAccountById(input.value)">a</button>
+<span *ngFor="let op of allOps$ | async">
+    {{op|json}}
+</span>
+<span *ngIf="account$ | async as op" >
+    {{op|json}}
+</span>
+
 </div>
