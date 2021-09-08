@@ -62,9 +62,12 @@ class AccountController @Inject()(
           }
         )
 
+      } else {
+        handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
       }
+    } else {
+      handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
     }
-    handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
   }}
 
   def update(id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
