@@ -22,23 +22,28 @@ class MyBaseController(
         errorMessage = Some(exception.err.toString),
         httpCode = Some(OK)
       )
-      Future {
-        Ok(gson.toJson(response))
-          .as(MimeTypes.JSON)
-      }
+      Future { Ok(gson.toJson(response)).as(MimeTypes.JSON) }
   }
 
   def okResponse[T <: Any](res: T): Future[Result] = {
     try {
-      val json = gson.toJson(ApiResponse(data = Some(res), httpCode = Some(OK)))
-      Future {Ok(json).as(MimeTypes.JSON)}
+      val response = ApiResponse(
+        data = Some(res),
+        httpCode = Some(OK)
+      )
+      Future {Ok(gson.toJson(response)).as(MimeTypes.JSON)}
     } catch {
       case exception: Exception => Future {InternalServerError("Internal server error: " + exception)}
     }
   }
+
   def createdResponse[T <: Any](res: Any): Future[Result] = {
     try {
-      Future {Created(gson.toJson(ApiResponse(data = Some(res), httpCode = Some(OK))))}
+      val response = ApiResponse(
+        data = Some(res),
+        httpCode = Some(OK)
+      )
+      Future { Created(gson.toJson(response)) }
     } catch {
       case exception: Exception => Future{InternalServerError("Internal server error: " + exception)}
     }

@@ -19,7 +19,7 @@ class AccountOperationRepository  @Inject()(
   def collection: Future[BSONCollection] = reactiveMongoApi.database.map(db => db.collection("accountoperations"))
 
   def getAll(filter: GetAccountOperationsFilterRequest): Future[Seq[AccountOperation]] = {
-    var doc = BSONDocument()
+    var doc = BSONDocument() // new document to compare with
     if (filter.userId.nonEmpty) {
       doc = doc ++ BSONDocument("_createBy" -> filter.userId.get)
     }
