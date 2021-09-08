@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../shared/services/auth.service";
 import {BehaviorSubject} from "rxjs";
@@ -94,7 +94,6 @@ export class LoginComponent implements OnInit {
   registerErrors$ = new BehaviorSubject<{ userExistsAlready: boolean }>({userExistsAlready: false});
 
   constructor(
-    private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService
@@ -105,16 +104,26 @@ export class LoginComponent implements OnInit {
       this.router.navigate([this.returnUrl]).then();
     }
 
-    this.loginFormGroup = this.fb.group({
-      username: ['', Validators.email],
-      password: ['', Validators.required]
+    this.loginFormGroup = new FormGroup({
+      username: new FormControl('', [Validators.email]),
+      password: new FormControl('', [Validators.required])
     });
 
-    this.registerFormGroup = this.fb.group({
-      username: ['', Validators.email],
-      password: ['', Validators.required],
-      confirmPassword: ['']
-    }, {validators: [(form) => form.value?.password?.value === form.value?.confirmPassword?.value]});
+    this.registerFormGroup = new FormGroup({
+      username: new FormControl('', [Validators.email]),
+      password: new FormControl('', [Validators.required]),
+      confirmPassword: new FormControl('')
+    }, [this.validateConfirmPassword]);
+  }
+
+  get validateConfirmPassword() {
+    return (form: AbstractControl) => {
+      if (form.value?.password !== form.value?.confirmPassword) {
+        form.get('confirmPassword')?.setErrors({passwordsNotEquiv: true})
+        return ({confirmPassword: {passwordsNotEquiv: true}})
+      }
+      return null
+    };
   }
 
   async ngOnInit(): Promise<void> {

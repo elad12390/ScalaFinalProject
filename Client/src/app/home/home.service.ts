@@ -16,10 +16,12 @@ export class HomeService {
     const path = BaseApiPath.accountOperations.getAll
     return this.http.get(path)
   }
+
    account$(id:string): Observable<IApiResponseModel<AccountOps>> {
     const path = BaseApiPath.accountOperations.getById(id)
     return this.http.get(path)
   }
+
   get newAccountOperation$(): Observable<IApiResponseModel<AccountOps>> {
     const path = BaseApiPath.accountOperations.create
     return this.http.post(path, {

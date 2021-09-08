@@ -1,6 +1,7 @@
 import { AuthApiPath } from './auth-api-mapping.model';
 import {AccountOperationsApiMapping} from "./account-operations-api-mapping.model";
 
+// host/api
 export class BaseApiPath {
   static readonly path = 'api';
   constructor() {}
