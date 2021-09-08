@@ -41,6 +41,20 @@ class UserService @Inject()(actorSystem: ActorSystem, userRepository: UserReposi
     })
   }
 
+  def getUserId(username: String): Future[Option[BSONObjectID]] = {
+    userRepository.getByUserName(username).map(user => {
+      if (user.nonEmpty) {
+        if (user.get._id.nonEmpty) {
+          user.get._id
+        } else {
+          None
+        }
+      } else {
+        None
+      }
+    })
+  }
+
   def login(req: AuthRequest): Future[AuthResponse] = {
     userRepository.getByUserName(req.userName).map[AuthResponse](user => {
       if (user.nonEmpty) {

@@ -9,12 +9,13 @@ import play.api.libs.json.JodaReads._
 
 
 case class AccountOperation(
-                  _id:Option[BSONObjectID],
-                  accountNumber: Option[Int],
-                  _createdAt: Option[DateTime],
-                  _updatedAt: Option[DateTime],
-                  actionType: Option[Int],
-                  amount: Option[Double]
+                  _id:            Option[BSONObjectID],
+                  _createBy:      Option[BSONObjectID],
+                  accountNumber:  Option[Int],
+                  _createdAt:     Option[DateTime],
+                  _updatedAt:     Option[DateTime],
+                  actionType:     Option[Int],
+                  amount:         Option[Double]
                 )
 
 object AccountOperation {
@@ -24,6 +25,7 @@ object AccountOperation {
     def read(doc: BSONDocument): AccountOperation = {
       AccountOperation(
         doc.getAs[BSONObjectID]("_id"),
+        doc.getAs[BSONObjectID]("_createBy"),
         doc.getAs[Int]("accountNumber"),
 
         doc.getAs[BSONDateTime]("_createdAt").map(dt => new DateTime(dt.value)),
@@ -39,6 +41,7 @@ object AccountOperation {
     def write(AccountOperation: AccountOperation): BSONDocument = {
       BSONDocument(
         "_id" -> AccountOperation._id,
+        "_createBy" -> AccountOperation._createBy,
         "accountNumber" -> AccountOperation.accountNumber,
         "_createdAt" -> AccountOperation._createdAt.map(date => BSONDateTime(date.getMillis)),
         "_updatedAt" -> AccountOperation._updatedAt.map(date => BSONDateTime(date.getMillis)),

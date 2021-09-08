@@ -20,6 +20,10 @@ class AccountOperationRepository  @Inject()(
 
   def getAll(filter: GetAccountOperationsFilterRequest): Future[Seq[AccountOperation]] = {
     var doc = BSONDocument()
+    if (filter.userId.nonEmpty) {
+      doc = doc ++ BSONDocument("_createBy" -> filter.userId.get)
+    }
+
     if (filter.accountNumber.nonEmpty) {
       doc = doc ++ BSONDocument("accountNumber" -> filter.accountNumber.get)
     }

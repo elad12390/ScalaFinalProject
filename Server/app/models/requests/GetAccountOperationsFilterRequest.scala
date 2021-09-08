@@ -3,10 +3,12 @@ package models.requests
 import org.joda.time.DateTime
 import play.api.libs.json.{Format, JsString, Json, Reads, Writes}
 import play.api.mvc.QueryStringBindable
+import reactivemongo.bson.BSONObjectID
 
 import java.util.Date
 
 case class GetAccountOperationsFilterRequest(
+                                            var userId: Option[BSONObjectID] = None,
                                             var accountNumber: Option[Int] = None,
                                             var actionType: Option[Int] = None,
                                             var fromDate: Option[DateTime] = None,
@@ -17,10 +19,17 @@ object GetAccountOperationsFilterRequest {
   implicit val tsreads: Reads[DateTime] = Reads.of[String] map { new DateTime(_) }
   implicit val tswrites: Writes[DateTime] = Writes { (dt: DateTime) => JsString(dt.toString)}
 
+  implicit val bsonFormat : Format[BSONObjectID] = Json.format[BSONObjectID]
   implicit val fmt : Format[GetAccountOperationsFilterRequest] = Json.format[GetAccountOperationsFilterRequest]
 
   def map2GetAccountOperationsFilterRequest(map: Map[String, String]): GetAccountOperationsFilterRequest = {
     var filter = GetAccountOperationsFilterRequest()
+    if (map.contains("userId")) {
+      val parseTry = map.get("userId").map(BSONObjectID.parse)
+      if (parseTry.nonEmpty && parseTry.get.isSuccess) {
+        filter.userId = Some(parseTry.get.get)
+      }
+    }
     if (map.contains("accountNumber")) {
       filter.accountNumber = map.get("accountNumber").map(_.toInt)
     }

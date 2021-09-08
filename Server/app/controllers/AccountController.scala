@@ -7,6 +7,7 @@ import models.requests.GetAccountOperationsFilterRequest
 import models.requests.GetAccountOperationsFilterRequest.map2GetAccountOperationsFilterRequest
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request, Result}
+import reactivemongo.bson.BSONObjectID
 import services.AccountService
 
 import javax.inject.Inject
@@ -19,8 +20,11 @@ class AccountController @Inject()(
                                    authService: AccountService,
                                    actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends MyBaseController(cc, actorSystem) {
 
-  def getAll(): Action[AnyContent] = Action.async { implicit request => {
+  def getAll: Action[AnyContent] = Action.async { implicit request => {
     var filter = request.queryString.map{ case (k,v) => k -> v.toString }
+    if (request.headers.get("userId").nonEmpty) {
+      filter += ("userId" -> request.headers.get("userId").get)
+    }
     authService.getAll(map2GetAccountOperationsFilterRequest(filter)).transformWith[Result]{
         case Success(res) => okResponse[Seq[AccountOperation]](res)
         case Failure(exception) => exception match {
@@ -41,16 +45,25 @@ class AccountController @Inject()(
   }
 
   def create(): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
-    request.body.validate[AccountOperation].fold(
-      _ => Future.successful(BadRequest("Cannot parse request body")),
-      op => authService.create(op).transformWith[Result]{
-        case Success(res) => createdResponse(res)
-        case Failure(exception) => exception match {
-          case e: ApiResponseException => handleApiResponseException(e)
-          case e => Future {InternalServerError("Internal server error: " + e.toString)}
-        }
+    if (request.headers.get("userId").nonEmpty) {
+      val createdByTry = BSONObjectID.parse(request.headers.get("userId").get)
+      if (createdByTry.isSuccess) {
+        request.body.validate[AccountOperation].fold(
+          _ => Future.successful(BadRequest("Cannot parse request body")),
+          op => authService.create(op.copy(_createBy = createdByTry.toOption)).transformWith[Result] {
+            case Success(res) => createdResponse(res)
+            case Failure(exception) => exception match {
+              case e: ApiResponseException => handleApiResponseException(e)
+              case e => Future {
+                InternalServerError("Internal server error: " + e.toString)
+              }
+            }
+          }
+        )
+
       }
-    )
+    }
+    okResponse(new {})
   }}
 
   def update(id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
