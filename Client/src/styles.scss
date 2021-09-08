@@ -1,20 +1,56 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('@angular/material/prebuilt-themes/deeppurple-amber.css');
-//body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+//body { margin: 0;  }
 
-body {
-  margin: 0 !important;
-  padding : 0 !important;
-  height: 100vh;
-  .router , .router > * ,.router > * > * {
-    height: 100% !important;
-  }
-}
-mat-card {
-  margin: 0 !important;
-}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
+
+body {
+  margin: 0 !important;
+  padding : 0 !important;
+  height: 100vh;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  .router , .router > * ,.router > * > * {
+    height: 100% !important;
+  }
+}
+
+mat-card {
+  margin: 0 !important;
+}
+
+mat-form-field {
+  display: block !important;
+  background: white !important;
+  border: 2px solid #81d1d7 !important;
+  border-radius: 8px !important;
+  min-height: 0 !important;
+  height: 3.5rem !important;
+  margin-bottom: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: .4rem;
+  padding-left: 0.6rem;
+  font-size: 1rem !important;
+  .mat-form-field-underline {
+    display: none !important;
+  }
+  input {
+    width: calc(100% - .5rem) !important;
+    padding-left: .5rem !important;
+  }
+
+}
+
+.mat-input-element {
+  background: white !important;
+
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+
