@@ -3,33 +3,77 @@
     <mat-card-content>
       <div class="content-wrapper" fxLayout="row" fxLayoutAlign="space-around center">
         <div fxFlex="60" class="image"></div>
-        <form fxFlex="40 min max" [formGroup]="form" (ngSubmit)="onSubmit()" fxLayout="column" fxLayoutGap=".5rem">
-          <h2>Log In</h2>
-          <mat-error *ngIf="loginInvalid">
-            The username and password were not recognized
-          </mat-error>
-          <mat-form-field>
-            <input matInput placeholder="Email" formControlName="username" required>
-            <mat-error>
-              Please provide a valid email address
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <input matInput type="password" placeholder="Password" formControlName="password" required>
-            <mat-error>
-              Please provide a valid password
-            </mat-error>
-          </mat-form-field>
-          <div fxLayout="row" fxLayoutGap="1rem">
-            <button mat-raised-button color="primary">Create Account</button>
-            <button mat-raised-button color="primary">Login</button>
+        <div class="forms-wrapper" fxFlex="40 min max">
+          <div [@flip]="viewedForm == 'login' ? 'front' : 'back'" class="form backface-hidden">
+            <ng-container *ngTemplateOutlet="loginForm"></ng-container>
           </div>
-          <ng-container *ngIf="loginErrors$ | async as loginErrors">
-            <div *ngIf="loginErrors.userNotFound" class="error">User not found</div>
-            <div *ngIf="loginErrors.wrongUserOrPassword" class="error">Wrong username or password</div>
-          </ng-container>
-        </form>
+          <div [@flip]="viewedForm == 'register' ? 'front' : 'back'" class="form register backface-hidden">
+            <ng-container *ngTemplateOutlet="registerForm"></ng-container>
+          </div>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>
 </div>
+
+<ng-template #loginForm>
+  <form [formGroup]="loginFormGroup" fxLayout="column" fxLayoutGap="1.2rem">
+    <h2>Log In</h2>
+    <mat-error *ngIf="loginInvalid">
+      The username and password were not recognized
+    </mat-error>
+    <mat-form-field>
+      <input matInput placeholder="Email" formControlName="username" required>
+      <mat-error>
+        Please provide a valid email address
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" formControlName="password" required>
+      <mat-error>
+        Please provide a valid password
+      </mat-error>
+    </mat-form-field>
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
+      <button (click)="onLoginSubmit()" mat-raised-button color="primary">Login</button>
+      <button (click)="onRegisterFlipButton()" mat-button color="primary">Create Account</button>
+    </div>
+    <ng-container *ngIf="loginErrors$ | async as loginErrors">
+      <div *ngIf="loginErrors.userNotFound" class="error">User not found</div>
+      <div *ngIf="loginErrors.wrongUserOrPassword" class="error">Wrong username or password</div>
+    </ng-container>
+  </form>
+</ng-template>
+
+<ng-template #registerForm>
+  <form fxFlex="40 min max" [formGroup]="registerFormGroup" fxLayout="column" fxLayoutGap="1.2rem">
+    <h2>Register</h2>
+    <mat-error *ngIf="loginInvalid">
+      The username and password were not recognized
+    </mat-error>
+    <mat-form-field>
+      <input matInput type="email" placeholder="Email" formControlName="username" required>
+      <mat-error>
+        Please provide a valid email address
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Password" formControlName="password" required>
+      <mat-error>
+        Please provide a valid password
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="password" placeholder="Confirm password" formControlName="confirmPassword" required>
+      <mat-error>
+        Passwords must be the same
+      </mat-error>
+    </mat-form-field>
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="1rem">
+      <button (click)="onRegisterSubmit()" mat-raised-button color="primary">Create Account</button>
+    </div>
+    <ng-container *ngIf="registerErrors$ | async as registerErrors">
+      <div *ngIf="registerErrors.userExistsAlready" class="error">Username is taken, please try another</div>
+    </ng-container>
+  </form>
+</ng-template>

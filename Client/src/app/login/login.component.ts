@@ -4,18 +4,94 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AuthService} from "../../shared/services/auth.service";
 import {BehaviorSubject} from "rxjs";
 import {InnerErrorCodes} from "../../shared/enums";
+import {animate, keyframes, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  animations: [
+    trigger('flip', [
+      state('front', style({
+        transform: 'rotateY(0deg)',
+        opacity: 1,
+      })),
+      state('back', style({
+        transform: 'rotateY(180deg)',
+        opacity: 0,
+      })),
+      transition('front => back', [
+        animate('1s 0s ease-out',
+          keyframes([
+            style({
+              transform: 'perspective(400px) rotateY(0deg)',
+              opacity: 1,
+              offset: 0
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(80deg)',
+              opacity: 1,
+              offset: 0.4
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(100deg)',
+              opacity: 0,
+              offset: 0.5
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(180deg)',
+              opacity: 0,
+              offset: 0.8
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(180deg)',
+              opacity: 0,
+              offset: 1
+            })
+          ]))
+      ]),
+      transition('back => front', [
+        animate('1s 0s ease-in',
+          keyframes([
+            style({
+              transform: 'perspective(400px) rotateY(180deg)',
+              opacity: 0,
+              offset: 0
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(180deg)',
+              opacity: 0,
+              offset: 0.4
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(100deg)',
+              opacity: 1,
+              offset: 0.5
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(80deg)',
+              opacity: 1,
+              offset: 0.8
+            }),
+            style({
+              transform: 'perspective(400px) rotateY(0deg)',
+              opacity: 1,
+              offset: 1
+            })
+          ]))
+      ])
+    ])
+  ]
 })
 export class LoginComponent implements OnInit {
-  form: FormGroup;
+  viewedForm: 'login' | 'register' = 'login'
+  loginFormGroup: FormGroup;
+  registerFormGroup: FormGroup;
   loginInvalid = false;
   formSubmitAttempt = false;
   returnUrl: string;
   loginErrors$ = new BehaviorSubject<{ userNotFound: boolean, wrongUserOrPassword: boolean }>({userNotFound: false, wrongUserOrPassword: false});
+  registerErrors$ = new BehaviorSubject<{ userExistsAlready: boolean }>({userExistsAlready: false});
 
   constructor(
     private fb: FormBuilder,
@@ -29,10 +105,16 @@ export class LoginComponent implements OnInit {
       this.router.navigate([this.returnUrl]).then();
     }
 
-    this.form = this.fb.group({
-      username: [''],
+    this.loginFormGroup = this.fb.group({
+      username: ['', Validators.email],
       password: ['', Validators.required]
     });
+
+    this.registerFormGroup = this.fb.group({
+      username: ['', Validators.email],
+      password: ['', Validators.required],
+      confirmPassword: ['']
+    }, {validators: [(form) => form.value?.password?.value === form.value?.confirmPassword?.value]});
   }
 
   async ngOnInit(): Promise<void> {
@@ -41,12 +123,11 @@ export class LoginComponent implements OnInit {
     // }
   }
 
-  async onSubmit(): Promise<void> {
+  async onLoginSubmit(): Promise<void> {
     this.loginInvalid = false;
     this.formSubmitAttempt = false;
-    if (this.form.valid) {
-        const username = this.form.get('username')?.value;
-        const password = this.form.get('password')?.value;
+    if (this.loginFormGroup.valid) {
+        const {username,password} = this.loginFormGroup.getRawValue();
         this.authService.login$(username, password)
           .subscribe(async (res) => {
             switch (res.errorCode) {
@@ -75,11 +156,45 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  async onRegisterSubmit(): Promise<void> {
+    this.loginInvalid = false;
+    this.formSubmitAttempt = false;
+    if (!!this.registerFormGroup && this.registerFormGroup.valid) {
+      const {username, password} = this.registerFormGroup.value;
+      this.authService.register$(username, password)
+        .subscribe((res) => {
+          switch (res.errorCode) {
+            case InnerErrorCodes.UserAlreadyExists:
+              this.registerErrors$.next({
+                userExistsAlready: true
+              })
+              break;
+            default:
+              if (this.authService.isLoggedIn) {
+                this.router.navigate([this.returnUrl]).then();
+              }
+              break;
+          }
+        });
+    } else {
+      this.formSubmitAttempt = true;
+    }
+  }
+
   sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   navigateToRegister() {
-    this.router.navigate(['register'], {queryParams:{userName: this.form.get('username')?.value}})
+    this.router.navigate(['register'], {queryParams:{userName: this.loginFormGroup.get('username')?.value}})
+  }
+
+  onRegisterFlipButton() {
+    this.viewedForm = 'register';
+    this.registerFormGroup.setValue({
+      username: this.loginFormGroup.get('username')?.value,
+      password: '',
+      confirmPassword: ''
+    })
   }
 }

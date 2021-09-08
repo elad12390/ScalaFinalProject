@@ -40,3 +40,21 @@ mat-card {
     border-bottom-right-radius: 0;
   }
 }
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.forms-wrapper {
+  position: relative;
+  min-width: 24rem;
+  top: -9rem;
+}
+.form {
+  position: absolute;
+  &.register {
+    margin-top: -1rem;
+  }
+}
+.flipped {
+  transform: rotate3d(0, 1, 0, 90deg);
+}

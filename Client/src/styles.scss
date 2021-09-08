@@ -44,7 +44,9 @@ mat-form-field {
   }
 
 }
-
+.mat-form-field-wrapper {
+  margin-top: -0.1rem;
+}
 .mat-input-element {
   background: white !important;
 

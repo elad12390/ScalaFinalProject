@@ -8,12 +8,9 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { LoginComponent } from './login/login.component';
-import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
-import {APIInterceptor} from "../shared/interceptors/api-interceptor";
-import {CommonModule} from "@angular/common";
-import {MatCommonModule} from "@angular/material/core";
-import { RegisterComponent } from './register/register.component';
-import {ErrorInterceptor} from "../shared/interceptors/error.interceptor";
+import { HttpClientModule } from "@angular/common/http";
+import { CommonModule } from "@angular/common";
+import { MatCommonModule } from "@angular/material/core";
 import {interceptors} from "../shared/interceptors/interceptors.const";
 
 @NgModule({
@@ -22,7 +19,6 @@ import {interceptors} from "../shared/interceptors/interceptors.const";
     HomeComponent,
     MainLayoutComponent,
     LoginComponent,
-    RegisterComponent,
   ],
   imports: [
     CommonModule,

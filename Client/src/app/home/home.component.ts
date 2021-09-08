@@ -13,21 +13,23 @@ export class HomeComponent implements OnInit {
 
   allOps$?: Observable<any>;
   account$?: Observable<any>;
-  constructor(private home: HomeService) { }
+  constructor(private homeService: HomeService) { }
 
   ngOnInit(): void {
   }
   getAccount(): void {
-    this.allOps$ = this.home.accountOps$.pipe
+    this.allOps$ = this.homeService.accountOps$.pipe
     (map(i => i.data));
   }
   getAccountById(id:string): void {
-    this.account$ = this.home.account$(id).pipe(
+    this.account$ = this.homeService.account$(id).pipe(
       map(res=>res.data)
     )
   }
 
-
+  createAccountOperation(): void {
+    this.homeService.newAccountOperation$.subscribe();
+  }
 
 
 
