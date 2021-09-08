@@ -2,6 +2,7 @@ package controllers
 
 import akka.actor.ActorSystem
 import entitites.AccountOperation
+import enums.InnerErrorCodes
 import models.exceptions.ApiResponseException
 import models.requests.GetAccountOperationsFilterRequest
 import models.requests.GetAccountOperationsFilterRequest.map2GetAccountOperationsFilterRequest
@@ -63,7 +64,7 @@ class AccountController @Inject()(
 
       }
     }
-    okResponse(new {})
+    handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
   }}
 
   def update(id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
