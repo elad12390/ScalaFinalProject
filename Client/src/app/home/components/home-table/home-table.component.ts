@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {concat, forkJoin, Observable, zip} from "rxjs";
 import {AccountOp, AccountOpsTableView, ActionTypes} from "../../account-op";
 import {HomeService} from "../../home.service";
@@ -13,6 +13,7 @@ export class HomeTableComponent implements OnInit {
 
   @Input() allOps$?: Observable<AccountOpsTableView[]>;
   @Input() displayedColumns?: string[];
+  @Output() updated: EventEmitter<any> = new EventEmitter<any>();
   allOps: AccountOpsTableView[] = [];
   ActionTypes = ActionTypes;
   newLines: AccountOpsTableView[] = [];
@@ -58,6 +59,7 @@ export class HomeTableComponent implements OnInit {
       forkJoin(obs).pipe(
         switchMap(() => this.allOps$!),
         tap((data: AccountOpsTableView[]) => {
+          this.updated.emit();
           this.allOps = data;
           this.isEdited = false;
           this.newLines = [];
@@ -77,11 +79,11 @@ export class HomeTableComponent implements OnInit {
   }
 
   delete(element: AccountOpsTableView) {
-    console.log(element)
     this.homeService.delete(element._id!)
       .pipe(
         switchMap(() => this.allOps$!),
         tap((data: AccountOpsTableView[]) => {
+          this.updated.emit();
           this.allOps = data;
           this.isEdited = false;
         })

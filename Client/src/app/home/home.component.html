@@ -1,4 +1,5 @@
-<div class="home-wrapper" fxLayout="column" fxLayoutGap="1rem">
-  <app-home-table [allOps$]="allOps$" [displayedColumns]="displayedColumns"></app-home-table>
+<div class="home-wrapper" fxLayout="column" fxLayoutGap="1rem" fxLayoutAlign="center end">
+  <h2>  עו"ש: <span *ngIf="balance$ | async as balance" [ngStyle]="{'color': balance < 0 ? 'red' : 'green'}">{{balance}}</span></h2>
+  <app-home-table (updated)="refresh$.next()" [allOps$]="allOps$" [displayedColumns]="displayedColumns"></app-home-table>
 <!--  <button (click)="create()">create</button>-->
 </div>

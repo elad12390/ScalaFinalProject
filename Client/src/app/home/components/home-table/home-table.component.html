@@ -74,8 +74,8 @@
   </div>
 
   <div fxFlexAlign="start" fxLayout="row" fxLayoutGap=".5rem">
-    <button *ngIf="!isEdited" mat-raised-button (click)="enterEditMode()">עריכה</button>
     <button mat-raised-button (click)="createNewLine()">חדש</button>
+    <button *ngIf="!isEdited" mat-raised-button (click)="enterEditMode()">עריכה</button>
     <button *ngIf="isEdited && isEditValid" mat-raised-button (click)="saveEdit()">שמירה</button>
     <button *ngIf="isEdited"  mat-raised-button (click)="cancelEdit()">ביטול</button>
   </div>

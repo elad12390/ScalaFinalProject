@@ -12,6 +12,11 @@ export class HomeService {
 
   constructor(private http: HttpClient) { }
 
+  get balance$(): Observable<IApiResponseModel<number>> {
+    const path = BaseApiPath.accountOperations.balance
+    return this.http.get(path)
+  }
+
   get accountOps$(): Observable<IApiResponseModel<AccountOp>> {
     const path = BaseApiPath.accountOperations.getAll
     return this.http.get(path)
