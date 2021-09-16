@@ -4,6 +4,7 @@ import javax.inject._
 import akka.actor.ActorSystem
 import entitites.AccountOperation
 import models.requests.GetAccountOperationsFilterRequest
+import reactivemongo.api.bson.BSONObjectID
 import reactivemongo.api.commands.WriteResult
 import repositories.AccountOperationRepository
 
@@ -12,6 +13,10 @@ import utils.utils._
 
 
 class AccountService @Inject()(actorSystem: ActorSystem, accountOperationRepository: AccountOperationRepository)(implicit exec: ExecutionContext ) extends MyBaseService(actorSystem, exec) {
+
+  def getBalance(id: String): Future[Double] = {
+    useBSONObjectId(id)(accountOperationRepository.getBalance)
+  }
 
   def getAll(filter: GetAccountOperationsFilterRequest): Future[Seq[AccountOperation]] = {
     accountOperationRepository.getAll(filter)

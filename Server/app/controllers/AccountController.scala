@@ -21,6 +21,20 @@ class AccountController @Inject()(
                                    authService: AccountService,
                                    actorSystem: ActorSystem)(implicit exec: ExecutionContext) extends MyBaseController(cc, actorSystem) {
 
+  def getBalance: Action[AnyContent] = Action.async { implicit request => {
+    if (request.headers.get("userId").nonEmpty) {
+        authService.getBalance(request.headers.get("userId").get).transformWith[Result]{
+          case Success(res) => okResponse[Double](res)
+          case Failure(exception) => exception match {
+            case e: ApiResponseException => handleApiResponseException(e)
+            case e => Future {InternalServerError("Internal server error: " + e.toString)}
+          }
+      }
+    } else {
+      handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
+    }
+  }}
+
   def getAll: Action[AnyContent] = Action.async { implicit request => {
     var filter = request.queryString.map{ case (k,v) => k -> v.toString }
     if (request.headers.get("userId").nonEmpty) {

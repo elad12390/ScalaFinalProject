@@ -5,9 +5,10 @@ import models.requests.GetAccountOperationsFilterRequest
 import org.joda.time.DateTime
 import reactivemongo.api.bson.collection.BSONCollection
 import play.modules.reactivemongo.{NamedDatabase, ReactiveMongoApi}
+import reactivemongo.api.bson.{BSONDocumentReader, BSONString, document}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.{Cursor, ReadPreference}
-import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONDocumentHandler, BSONObjectID}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,6 +18,15 @@ class AccountOperationRepository  @Inject()(
                                              val reactiveMongoApi: ReactiveMongoApi
                                            ) {
   def collection: Future[BSONCollection] = reactiveMongoApi.database.map(db => db.collection("accountoperations"))
+
+
+  def getBalance(userId: BSONObjectID): Future[Double] = {
+    collection.flatMap(
+      _.find(BSONDocument("_createBy" -> userId), Option.empty[AccountOperation])
+        .cursor[AccountOperation](ReadPreference.Primary)
+        .collect(Int.MaxValue, Cursor.FailOnError[Seq[AccountOperation]]())
+    ).map(data => data.foldLeft(0.0)(_ + _.amount.get))
+  }
 
   def getAll(filter: GetAccountOperationsFilterRequest): Future[Seq[AccountOperation]] = {
     var doc = BSONDocument() // new document to compare with
