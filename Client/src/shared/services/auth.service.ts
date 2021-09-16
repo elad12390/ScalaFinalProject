@@ -72,7 +72,7 @@ export class AuthService {
 
   public logout() {
     this.authUserData$.next(null);
-    this.localStorageService.remove(USER_LOCALSTORAGE_PATH)
+    this.localStorageService.remove(USER_LOCALSTORAGE_PATH);
   }
 }
 

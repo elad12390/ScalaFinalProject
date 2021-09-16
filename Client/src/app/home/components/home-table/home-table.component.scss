@@ -1,0 +1,11 @@
+table {
+  width: 100%;
+}
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  direction: rtl;
+
+}
+
+th, td {
+  text-align: right !important;
+}

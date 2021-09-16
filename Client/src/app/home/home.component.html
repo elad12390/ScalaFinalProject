@@ -1,13 +1,5 @@
-<div fxLayout="column" fxLayoutAlign="center center">
-  <input type="text" #input  ngmodel>
-  <button class="btn btn-success"  (click)="getAccount()">get all</button>
-  <button class="btn btn-success"  (click)="getAccountById(input.value)">get one</button>
-    <button class="btn btn-success"  (click)="createAccountOperation()">create</button>
-  <span *ngFor="let op of allOps$ | async">
-      {{op|json}}
-  </span>
-  <span *ngIf="account$ | async as op" >
-      {{op|json}}
-  </span>
-
+<div class="home-wrapper" fxLayout="column" fxLayoutGap="1rem">
+  <app-main-layout></app-main-layout>
+  <app-home-table [allOps$]="allOps$" [displayedColumns]="displayedColumns"></app-home-table>
+<!--  <button (click)="create()">create</button>-->
 </div>

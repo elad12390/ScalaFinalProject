@@ -20,7 +20,11 @@ export class AccountOperationsApiMapping {
     return this.path;
   }
 
-  get update(): string {
-    return this.path;
+  update(id: string): string {
+    return addToPath(this.path, id);
+  }
+
+  delete(id: string): string {
+    return addToPath(this.path, id);
   }
 }

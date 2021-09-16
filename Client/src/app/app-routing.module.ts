@@ -12,9 +12,11 @@ const routes: Routes = [
   {
     path: '',
     canActivateChild: [AuthGuard],
+    runGuardsAndResolvers: 'always',
     children: [
       {
         path: '',
+        runGuardsAndResolvers: 'always',
         component: HomeComponent,
       }
     ]
@@ -26,7 +28,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

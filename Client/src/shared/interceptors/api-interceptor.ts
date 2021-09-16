@@ -19,7 +19,8 @@ export class APIInterceptor implements HttpInterceptor {
       url: `${environment.baseURL}/${req.url}`,
       ...(token && {setHeaders: {
         'user': userName,
-        'token': token
+        'token': token,
+        'Authentication': `bearer ${token}`
       }})
     });
     return next.handle(apiReq)
