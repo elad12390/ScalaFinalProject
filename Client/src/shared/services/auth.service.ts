@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, of} from 'rxjs';
-import {catchError, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
+import {map, switchMap, tap} from 'rxjs/operators';
 import { BaseApiPath } from '../api-mapping/base-api-mapping.model';
 import { IAuthorizedUserData } from '../models/auth.models';
 import { ObservableCache } from '../utils/observable-cache';
@@ -19,6 +19,12 @@ export class AuthService {
   constructor(private localStorageService: LocalStorageService, private httpClient: HttpClient) { }
   public get isLoggedIn() {
     return !!this.localStorageService.get(USER_LOCALSTORAGE_PATH) || !!this.authUserData$.value;
+  }
+
+  public get isLoggedIn$(): Observable<boolean> {
+    return this.localStorageService.get$(USER_LOCALSTORAGE_PATH).pipe(
+      switchMap(res => !!res ? this.authUserData$.pipe(map(data => !!data)) : of(!!res))
+    );
   }
 
   public get userData(): IAuthorizedUserData | null {

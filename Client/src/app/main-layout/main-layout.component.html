@@ -1,5 +1,5 @@
 <header>
-  <mat-toolbar class="mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between center">
+  <mat-toolbar *ngIf="isLoggedIn" class="mat-elevation-z2" fxLayout="row" fxLayoutAlign="space-between center">
     <button mat-icon-button (click)="logout()">
       <mat-icon>logout</mat-icon>
     </button>

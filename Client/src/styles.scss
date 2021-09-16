@@ -14,8 +14,17 @@ body {
   padding : 0 !important;
   height: 100vh;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  .router , .router > * ,.router > * > * {
-    height: 100% !important;
+  .router:not(.loggedIn) {
+    height: 100%;
+    app-login {
+      height: 100%;
+       & > div {
+        height: 100%;
+      }
+    }
+  }
+  .router.loggedIn {
+    height: 80%;
   }
 }
 .login {

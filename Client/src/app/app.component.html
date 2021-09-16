@@ -1,3 +1,4 @@
-<div class="router">
+<app-main-layout [isLoggedIn]="isLoggedIn"></app-main-layout>
+<div class="router {{isLoggedIn ? 'loggedIn' : ''}}">
   <router-outlet></router-outlet>
 </div>

@@ -1,11 +1,24 @@
-table {
-  width: 100%;
-}
-th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
-  direction: rtl;
 
+.table-wrapper {
+  .table {
+    table {
+      width: 100%;
+      tr.mat-header-row {
+        z-index: 10;
+        background: white;
+        border-bottom: 1px solid black !important;
+      }
+    }
+    max-height: 80vh;
+    min-height: 80vh;
+    overflow-y: auto;
+  }
 }
+  th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+    direction: rtl;
 
-th, td {
-  text-align: right !important;
-}
+  }
+
+  th, td {
+    text-align: right !important;
+  }
