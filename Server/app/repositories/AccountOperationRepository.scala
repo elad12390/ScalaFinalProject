@@ -66,7 +66,7 @@ class AccountOperationRepository  @Inject()(
   def update(id: BSONObjectID, newOperation: AccountOperation): Future[WriteResult] = {
     collection.flatMap(
       _.update(ordered = false)
-        .one(BSONDocument("_id" -> id), newOperation.copy(_updatedAt = Some(DateTime.now)))
+        .one(BSONDocument("_id" -> id), newOperation.copy(_id = Some(id), _updatedAt = Some(DateTime.now)))
     )
   }
 

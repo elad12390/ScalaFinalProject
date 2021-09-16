@@ -71,16 +71,28 @@ class AccountController @Inject()(
   }}
 
   def update(id: String): Action[JsValue] = Action.async(controllerComponents.parsers.json) { implicit request => {
-    request.body.validate[AccountOperation].fold(
-      _ => Future.successful(BadRequest("Cannot parse request body")),
-      op => authService.update(id, op).transformWith[Result]{
-        case Success(res) => okResponse(res)
-        case Failure(exception) => exception match {
-          case e: ApiResponseException => handleApiResponseException(e)
-          case e => Future {InternalServerError("Internal server error: " + e.toString)}
-        }
-      },
-    )
+    if (request.headers.get("userId").nonEmpty) {
+      val createdByTry = BSONObjectID.parse(request.headers.get("userId").get)
+      if (createdByTry.isSuccess) {
+        request.body.validate[AccountOperation].fold(
+          _ => Future.successful(BadRequest("Cannot parse request body")),
+          op => authService.update(id, op.copy(_createBy = createdByTry.toOption)).transformWith[Result] {
+            case Success(res) => createdResponse(res)
+            case Failure(exception) => exception match {
+              case e: ApiResponseException => handleApiResponseException(e)
+              case e => Future {
+                InternalServerError("Internal server error: " + e.toString)
+              }
+            }
+          }
+        )
+
+      } else {
+        handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
+      }
+    } else {
+      handleApiResponseException(ApiResponseException(InnerErrorCodes.NotLoggedIn))
+    }
   }}
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request: Request[Any] =>
